@@ -26,26 +26,35 @@ const mockUsers = [
 
 const Index = () => {
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-museprimary-800">MuseTera - Controle de Pagamentos</h1>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="bg-museprimary-600 hover:bg-museprimary-700">
-              <Plus className="mr-2 h-4 w-4" />
-              Novo Usuário
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Cadastrar Novo Usuário</DialogTitle>
-            </DialogHeader>
-            <UserForm />
-          </DialogContent>
-        </Dialog>
-      </div>
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <UsersList users={mockUsers} />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-8">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col gap-8">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-museprimary-600 to-museprimary-800 bg-clip-text text-transparent">
+                MuseTera
+              </h1>
+              <p className="text-gray-600 mt-2">Controle de Pagamentos</p>
+            </div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-to-r from-museprimary-600 to-museprimary-700 hover:from-museprimary-700 hover:to-museprimary-800 text-white shadow-lg hover:shadow-xl transition-all duration-300">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Novo Usuário
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-bold text-museprimary-800">Cadastrar Novo Usuário</DialogTitle>
+                </DialogHeader>
+                <UserForm />
+              </DialogContent>
+            </Dialog>
+          </div>
+          <div className="bg-white rounded-xl shadow-xl p-6 backdrop-blur-lg bg-opacity-90">
+            <UsersList users={mockUsers} />
+          </div>
+        </div>
       </div>
     </div>
   );
