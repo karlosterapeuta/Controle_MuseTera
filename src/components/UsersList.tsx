@@ -3,7 +3,21 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Phone, Mail, Eye } from "lucide-react";
+import { Phone, Mail, Eye, MoreVertical } from "lucide-react";
+import { useUsers } from "@/hooks/useUsers";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface UsersListProps {
   users: User[];
@@ -11,6 +25,7 @@ interface UsersListProps {
 
 export const UsersList = ({ users }: UsersListProps) => {
   const navigate = useNavigate();
+  const updateUserStatus = useUsers((state) => state.updateUserStatus);
 
   const getStatusColor = (status: PaymentStatus) => {
     switch (status) {
@@ -21,6 +36,15 @@ export const UsersList = ({ users }: UsersListProps) => {
       default:
         return "bg-gray-500";
     }
+  };
+
+  const handleStatusChange = (userId: string, newStatus: PaymentStatus) => {
+    updateUserStatus(userId, newStatus);
+  };
+
+  const toggleStatus = (userId: string, currentStatus: PaymentStatus) => {
+    const newStatus = currentStatus === "PAID" ? "PENDING" : "PAID";
+    updateUserStatus(userId, newStatus);
   };
 
   return (
@@ -51,19 +75,72 @@ export const UsersList = ({ users }: UsersListProps) => {
                 </div>
               </TableCell>
               <TableCell>
-                <Badge className={`${getStatusColor(user.status)} shadow-sm`}>
+                <Badge 
+                  className={`${getStatusColor(user.status)} shadow-sm cursor-pointer hover:opacity-90`}
+                  onClick={() => toggleStatus(user.id, user.status)}
+                >
                   {user.status === "PAID" ? "Pago" : "Pendente"}
                 </Badge>
               </TableCell>
               <TableCell>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => navigate(`/users/${user.id}`)}
-                  className="hover:bg-museprimary-50 hover:text-museprimary-600 transition-colors"
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="hover:bg-museprimary-50 hover:text-museprimary-600 transition-colors"
+                    >
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                          Ver detalhes
+                        </DropdownMenuItem>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Detalhes do Usuário</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <p><strong>Nome:</strong> {user.name}</p>
+                          <p><strong>E-mail:</strong> {user.email}</p>
+                          <p><strong>Telefone:</strong> {user.phone}</p>
+                          <p><strong>Status:</strong> {user.status === "PAID" ? "Pago" : "Pendente"}</p>
+                          <p><strong>Cadastrado em:</strong> {new Date(user.registeredAt).toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}</p>
+                          <div>
+                            <strong>Pagamentos:</strong>
+                            {user.payments.length > 0 ? (
+                              <ul>
+                                {user.payments.map((payment) => (
+                                  <li key={payment.id}>
+                                    {payment.month}/{payment.year} - {payment.status}
+                                  </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p>Nenhum pagamento registrado</p>
+                            )}
+                          </div>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                    <DropdownMenuItem onClick={() => handleStatusChange(user.id, "PAID")}>
+                      Marcar como Pago
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleStatusChange(user.id, "PENDING")}>
+                      Marcar como Pendente
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </TableCell>
             </TableRow>
           ))}

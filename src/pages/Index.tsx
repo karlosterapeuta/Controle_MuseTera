@@ -3,28 +3,11 @@ import { UsersList } from "@/components/UsersList";
 import { UserForm } from "@/components/UserForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
-
-// Dados mockados para exemplo
-const mockUsers = [
-  {
-    id: "1",
-    name: "João Silva",
-    email: "joao@example.com",
-    phone: "(11) 99999-9999",
-    status: "PAID" as const,
-    payments: [],
-  },
-  {
-    id: "2",
-    name: "Maria Santos",
-    email: "maria@example.com",
-    phone: "(11) 88888-8888",
-    status: "PENDING" as const,
-    payments: [],
-  },
-];
+import { useUsers } from "@/hooks/useUsers";
 
 const Index = () => {
+  const users = useUsers((state) => state.users);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-8">
       <div className="container mx-auto px-4">
@@ -52,7 +35,7 @@ const Index = () => {
             </Dialog>
           </div>
           <div className="bg-white rounded-xl shadow-xl p-6 backdrop-blur-lg bg-opacity-90">
-            <UsersList users={mockUsers} />
+            <UsersList users={users} />
           </div>
         </div>
       </div>

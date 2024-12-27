@@ -16,4 +16,5 @@ export interface User {
   phone: string;
   status: PaymentStatus;
   payments: Payment[];
+  registeredAt: string;
 }
